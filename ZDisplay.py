@@ -21,7 +21,7 @@ import sys #for command line arguments
 import threading
 import time
 from datetime import datetime
-
+from threading import Timer
 
 def setInterval(interval, times = -1):
     """Code taken from http://stackoverflow.com/questions/5179467/equivalent-of-setinterval-in-python
@@ -116,7 +116,8 @@ class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be i
         button1.pack(side="bottom")
 
 
-
+        timer = Timer(10.0, buttonClicked(textVar1))
+        timer.start()
 
         #topLabel.after(1000, updateFontFromScale())
         self.window.mainloop() #displays the window
