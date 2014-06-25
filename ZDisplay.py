@@ -12,7 +12,7 @@ or inherited Tkinter member methods to form the display.  ZDisplay class should 
 of its own methods to update the feed and perhaps actively change the display once built and running even.
 
 """
-
+import tkinter
 from tkinter import * #if using python 2 change to Tkinter
 import configparser
 from tkinter import font
@@ -24,30 +24,31 @@ import sys #for command line arguments
 
 class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be it's own window?  Any downside?
 
-    def __init__(self, configFilepath): #maybe parser shoud be a separate class so it can first parse, then construct ZDisplay?
+    def __init__(self, parser): #maybe parser shoud be a separate class so it can first parse, then construct ZDisplay?
         
         print("in init method!")
-        self.configFilepath = configFilepath
+        self.parser = parser
         self.window = Tk() #open a window in tkinter
-        self.numOfRows = None #possible namespace conflict here
-        self.screenWidth, self.screenHeight = window.winfo_screenwidth(), window.winfo_screenheight()
-        print("Width: {0}  Height: {1}".format(str(screenWidth), str(screenHeight)))
+        self.numOfRows = parser.get("GeneralSection", "numofrows") #possible namespace conflict here
+        print("numOfRows: ", self.numOfRows)
+        self.screenWidth, self.screenHeight = self.window.winfo_screenwidth(), self.window.winfo_screenheight()
+        print("Width: {0}  Height: {1}".format(str(self.screenWidth), str(self.screenHeight)))
         self.window.title('Shiprush LiveDisplay')
-        self.window.geometry("{0}x{1}".format(str(screenWidth-17), str(screenHeight-75)))  #Reset according to screen
+        self.window.geometry("{0}x{1}".format(str(self.screenWidth-17), str(self.screenHeight-75)))  #Reset according to screen
         #width -17 is there because the windwo seems to be 17 pixels too wide.  Maybe because the transparent
         #windows border isn't indcluded?
 
         #Scale
-        scale1 = Scale(window, from_=12, to=80, orient=HORIZONTAL)
+        scale1 = Scale(self.window, from_=12, to=80, orient=HORIZONTAL)
         scale1.grid(row=10, column=0, sticky=(S, E))
 
         #create two seperate frames for two seperate rows:
         #top frame:
-        leftFrame = tkinter.Frame(window, width=screenWidth, height = screenHeight/2, bd = 30, relief = RAISED)
+        leftFrame = tkinter.Frame(self.window, width=self.screenWidth, height = self.screenHeight/2, bd = 30, relief = RAISED)
         leftFrame.pack(side="top", padx=5, pady=50)
 
         #Create a frame on the bottom now
-        rightFrame = tkinter.Frame(window, bg="black", width=screenWidth, height = screenHeight/2, bd = 20, relief = RAISED)
+        rightFrame = tkinter.Frame(window, bg="black", width=self.screenWidth, height = self.screenHeight/2, bd = 20, relief = RAISED)
         rightFrame.pack(side="top", padx=5, pady=30)
 
         #display a label insdie the top frame
@@ -61,7 +62,7 @@ class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be i
         bottomLabel.pack(side="bottom") #didn't work
 
         #Button
-        button1 = Button(window, text="Refresh", width = 30, command=buttonClicked)
+        button1 = Button(self.window, text="Refresh", width = 30, command=buttonClicked)
         button1.pack(side="bottom")
 
 
@@ -115,6 +116,9 @@ parser = configparser.ConfigParser() #Instantiate object
 print("args[1]: ", argsList[1])
 parser.read(argsList[1])
 print(str(parser.sections()))
+
+#Now going to pass ConfigParser object to ZDisplay
+display = ZDisplay(parser)
 
 #self.numOfRows = int(parser.get("GeneralSection", "NumOfRows"))
 #print("Number of rows:", self.numOfRows)
