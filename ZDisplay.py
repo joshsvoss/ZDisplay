@@ -19,6 +19,8 @@ from tkinter import font
 #from ttk import * #Themed Tk.  Is this working??
 import sys #for command line arguments
 import threading
+import time
+from datetime import datetime
 
 
 def setInterval(interval, times = -1):
@@ -49,6 +51,14 @@ def setInterval(interval, times = -1):
         return wrap
     return outer_wrap
 
+    #button clicked command
+def buttonClicked(var):
+    var.set(localScript()) #Why is this executing before it's pressed?
+    pass
+
+
+def localScript():
+    return str(datetime.now().time())
 
 
 class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be it's own window?  Any downside?
@@ -83,6 +93,7 @@ class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be i
         #create two seperate frames for two seperate rows:
         #top frame:
         textVar1 = StringVar()
+        textVar1.set("Before the button's pressed!!") #Why is this coming out as the function id not the return value?
         topFrame = tkinter.Frame(self.window, width=self.screenWidth +1000, height = self.screenHeight/2, bd = 5, relief = RAISED, padx = 20, pady = 12)
         topFrame.pack(side="top", padx=5, pady=50)
 
@@ -92,7 +103,7 @@ class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be i
 
         #display a label insdie the top frame
         topLabel = tkinter.Label(topFrame, wraplength=(self.screenWidth//2), bg = self.specGet("Row1Section", "backgroundcolor"), 
-                                 text="Shiprush bottom data!", fg="red", font=("Times New Roman", scale1.get()))
+                                 textvariable=textVar1, fg="red", font=("Times New Roman", scale1.get()))
         topLabel.pack(side="top") #didn't work, still in middle left. acnhor nw maybe?
 
         #display label inside the bottom frame
@@ -101,8 +112,9 @@ class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be i
         bottomLabel.pack(side="bottom") #didn't work
 
         #Button
-        button1 = Button(self.window, text="Refresh", width = 30) #add command
+        button1 = Button(self.window, text="Refresh", width = 30, command = lambda: buttonClicked(textVar1)) #add command
         button1.pack(side="bottom")
+
 
 
 
@@ -121,10 +133,7 @@ class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be i
         #call this function continoutsly
         #labelRef.after(1000, updateFontFromScale)
 
-    #button clicked command
-    def buttonClicked():
-        print("button clicked command runngin!")
-        updateFontFromScale
+
 
    #define?
     def __str__(self):
