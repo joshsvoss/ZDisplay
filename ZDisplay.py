@@ -40,7 +40,7 @@ class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be i
 
         #Scale
         scale1 = Scale(self.window, from_=12, to=80, orient=HORIZONTAL)
-        scale1.grid(row=10, column=0, sticky=(S, E))
+        scale1.pack(side="left")
 
         #create two seperate frames for two seperate rows:
         #top frame:
@@ -48,26 +48,26 @@ class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be i
         leftFrame.pack(side="top", padx=5, pady=50)
 
         #Create a frame on the bottom now
-        rightFrame = tkinter.Frame(window, bg="black", width=self.screenWidth, height = self.screenHeight/2, bd = 20, relief = RAISED)
+        rightFrame = tkinter.Frame(self.window, bg="black", width=self.screenWidth, height = self.screenHeight/2, bd = 20, relief = RAISED)
         rightFrame.pack(side="top", padx=5, pady=30)
 
         #display a label insdie the top frame
-        topLabel = tkinter.Label(leftFrame, wraplength=(screenWidth//2), text="Shiprush left data!", fg="Moccasin", font=("Times New Roman", scale1.get()))
+        topLabel = tkinter.Label(leftFrame, wraplength=(self.screenWidth//2), text="Shiprush bottom data!", fg="Moccasin", font=("Times New Roman", scale1.get()))
         topLabel.config(activebackground="black")
         topLabel.pack(side="top") #didn't work, still in middle left. acnhor nw maybe?
 
         #display label inside the bottom frame
-        bottomLabel = tkinter.Label(rightFrame, anchor=W, wraplength=(screenWidth//2), text="Shiprush right data!", fg="Moccasin", font=("Times New Roman", scale1.get()))
+        bottomLabel = tkinter.Label(rightFrame, anchor=W, wraplength=(self.screenWidth//2), text="Shiprush top data!", fg="Moccasin", font=("Times New Roman", scale1.get()))
         bottomLabel.config(activebackground="black") #Unclear that this does anything
         bottomLabel.pack(side="bottom") #didn't work
 
         #Button
-        button1 = Button(self.window, text="Refresh", width = 30, command=buttonClicked)
+        button1 = Button(self.window, text="Refresh", width = 30) #add command
         button1.pack(side="bottom")
 
 
         #topLabel.after(1000, updateFontFromScale())
-        window.mainloop() #displays the window
+        self.window.mainloop() #displays the window
 
 
 
