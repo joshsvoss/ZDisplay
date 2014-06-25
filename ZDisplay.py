@@ -13,24 +13,22 @@ of its own methods to update the feed and perhaps actively change the display on
 
 """
 
-import tkinter #if using python 2 change to Tkinter
-from tkinter import *
+from tkinter import * #if using python 2 change to Tkinter
 import configparser
 from tkinter import font
 #from ttk import * #Themed Tk.  Is this working??
 import sys #for command line arguments
 
-#possible action to be performed when botton is clicked
 
 
 
 class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be it's own window?  Any downside?
 
     def __init__(self, configFilepath): #maybe parser shoud be a separate class so it can first parse, then construct ZDisplay?
-        #open a window in tkinter
+        
         print("in init method!")
         self.configFilepath = configFilepath
-        self.window = Tk()
+        self.window = Tk() #open a window in tkinter
         self.numOfRows = None #possible namespace conflict here
         self.screenWidth, self.screenHeight = window.winfo_screenwidth(), window.winfo_screenheight()
         print("Width: {0}  Height: {1}".format(str(screenWidth), str(screenHeight)))
@@ -101,28 +99,7 @@ class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be i
     doesn't hurt to inherit I guess just gives me added flexibility.  
     """
    
-    def parse():
-        #parse the config file
-        parser = configparser.ConfigParser() #Instantiate object
-        parser.read(self.configFilepath)
-
-        self.numOfRows = int(parser.get("GeneralSection", "NumOfRows"))
-        print("Number of rows:", self.numOfRows)
-
-        #Use nested for looop to recieve all of the config options, depending on numOfRows
-
-
-        #Construct a ZDisplay object passing it the parameters
     
-        #TODO possible delete
-        #based on numOfRows, read in all of the filepaths in the config file
-        #TODO Should each row be done seperately instead? serial instead of paralel?
-        #scriptPathList = list()
-        #for i in range(1, (numOfRows + 1)) :
-        #    scriptPathList.append(parser.get("RowsSection", "Row%s.py" % i)) #Get specified script filepath
-
-        #print(scriptPathList)
-
 
 #Program begins running here:
 #check command line argument for filepath to config:
@@ -131,8 +108,30 @@ if len(argsList) <2:
     print("ERROR: please provide config file filepath as cmd line argument.") #TODO is the .err stream?
     sys.exit(2)
 #otherwise, use the arg to find the .ini file:
-zdisplay = ZDisplay(argsList[1])
-#ZDisplay.parse(argsList[1])
+
+
+#parse the config file
+parser = configparser.ConfigParser() #Instantiate object
+print("args[1]: ", argsList[1])
+parser.read(argsList[1])
+print(str(parser.sections()))
+
+#self.numOfRows = int(parser.get("GeneralSection", "NumOfRows"))
+#print("Number of rows:", self.numOfRows)
+
+#Use nested for looop to recieve all of the config options, depending on numOfRows
+
+
+#Construct a ZDisplay object passing it the parameters
+    
+#TODO possible delete
+#based on numOfRows, read in all of the filepaths in the config file
+#TODO Should each row be done seperately instead? serial instead of paralel?
+#scriptPathList = list()
+#for i in range(1, (numOfRows + 1)) :
+#    scriptPathList.append(parser.get("RowsSection", "Row%s.py" % i)) #Get specified script filepath
+
+#print(scriptPathList)
 
 
 
