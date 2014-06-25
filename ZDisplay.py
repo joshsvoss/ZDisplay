@@ -18,7 +18,36 @@ import configparser
 from tkinter import font
 #from ttk import * #Themed Tk.  Is this working??
 import sys #for command line arguments
+import threading
 
+
+def setInterval(interval, times = -1):
+    """Code taken from http://stackoverflow.com/questions/5179467/equivalent-of-setinterval-in-python
+    designed to be a method decorator to call method repeatedly without blocking following code
+    """
+    # This will be the actual decorator,
+    # with fixed interval and times parameter
+    def outer_wrap(function):
+        # This will be the function to be
+        # called
+        def wrap(*args, **kwargs):
+            stop = threading.Event()
+
+            # This is another function to be executed
+            # in a different thread to simulate setInterval
+            def inner_wrap():
+                i = 0
+                while i != times and not stop.isSet():
+                    stop.wait(interval)
+                    function(*args, **kwargs)
+                    i += 1
+
+            t = threading.Timer(0, inner_wrap)
+            t.daemon = True
+            t.start()
+            return stop
+        return wrap
+    return outer_wrap
 
 
 
@@ -27,9 +56,14 @@ class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be i
     def __init__(self, parser): #maybe parser shoud be a separate class so it can first parse, then construct ZDisplay?
         
         print("in init method!")
+        
         self.parser = parser
         self.window = Tk() #open a window in tkinter
-        self.numOfRows = parser.get("GeneralSection", "numofrows") #possible namespace conflict here
+        self.numOfRows = int(parser.get("GeneralSection", "numofrows")) #possible namespace conflict here
+        if self.numOfRows < 1:
+            raise IOError("Must sepcify at least 1 row in config file.")
+
+        
         print("numOfRows: ", self.numOfRows)
         self.screenWidth, self.screenHeight = self.window.winfo_screenwidth(), self.window.winfo_screenheight()
         print("Width: {0}  Height: {1}".format(str(self.screenWidth), str(self.screenHeight)))
@@ -38,32 +72,38 @@ class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be i
         #width -17 is there because the windwo seems to be 17 pixels too wide.  Maybe because the transparent
         #windows border isn't indcluded?
 
+    def specGet(self, section, option):
+        return self.parser.get(section, option)
+
+    def build(self):
         #Scale
         scale1 = Scale(self.window, from_=12, to=80, orient=HORIZONTAL)
         scale1.pack(side="left")
 
         #create two seperate frames for two seperate rows:
         #top frame:
-        leftFrame = tkinter.Frame(self.window, width=self.screenWidth, height = self.screenHeight/2, bd = 30, relief = RAISED)
-        leftFrame.pack(side="top", padx=5, pady=50)
+        textVar1 = StringVar()
+        topFrame = tkinter.Frame(self.window, width=self.screenWidth +1000, height = self.screenHeight/2, bd = 5, relief = RAISED, padx = 20, pady = 12)
+        topFrame.pack(side="top", padx=5, pady=50)
 
         #Create a frame on the bottom now
-        rightFrame = tkinter.Frame(self.window, bg="black", width=self.screenWidth, height = self.screenHeight/2, bd = 20, relief = RAISED)
-        rightFrame.pack(side="top", padx=5, pady=30)
+        bottomFrame = tkinter.Frame(self.window, bg="black", width = self.screenWidth, height = self.screenHeight/2, bd = 20, relief = RAISED)
+        bottomFrame.pack(side="top", padx=5, pady=30)
 
         #display a label insdie the top frame
-        topLabel = tkinter.Label(leftFrame, wraplength=(self.screenWidth//2), text="Shiprush bottom data!", fg="Moccasin", font=("Times New Roman", scale1.get()))
-        topLabel.config(activebackground="black")
+        topLabel = tkinter.Label(topFrame, wraplength=(self.screenWidth//2), bg = self.specGet("Row1Section", "backgroundcolor"), 
+                                 text="Shiprush bottom data!", fg="red", font=("Times New Roman", scale1.get()))
         topLabel.pack(side="top") #didn't work, still in middle left. acnhor nw maybe?
 
         #display label inside the bottom frame
-        bottomLabel = tkinter.Label(rightFrame, anchor=W, wraplength=(self.screenWidth//2), text="Shiprush top data!", fg="Moccasin", font=("Times New Roman", scale1.get()))
+        bottomLabel = tkinter.Label(bottomFrame, anchor=W, wraplength=(self.screenWidth//2), text="Shiprush top data!", fg="blue", font=("Times New Roman", scale1.get()))
         bottomLabel.config(activebackground="black") #Unclear that this does anything
         bottomLabel.pack(side="bottom") #didn't work
 
         #Button
         button1 = Button(self.window, text="Refresh", width = 30) #add command
         button1.pack(side="bottom")
+
 
 
         #topLabel.after(1000, updateFontFromScale())
@@ -119,6 +159,7 @@ print(str(parser.sections()))
 
 #Now going to pass ConfigParser object to ZDisplay
 display = ZDisplay(parser)
+display.build()
 
 #self.numOfRows = int(parser.get("GeneralSection", "NumOfRows"))
 #print("Number of rows:", self.numOfRows)
