@@ -11,6 +11,8 @@ perhaps join the classes?  Or another way of sharing scope?)  Call either Tkinte
 or inherited Tkinter member methods to form the display.  ZDisplay class should also own some
 of its own methods to update the feed and perhaps actively change the display once built and running even.
 
+See and run colors.py for all tkinter color options
+
 """
 import tkinter
 from tkinter import * #if using python 2 change to Tkinter
@@ -38,7 +40,7 @@ def localScript():
 
 class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be it's own window?  Any downside?
 
-    def __init__(self, parser): #maybe parser shoud be a separate class so it can first parse, then construct ZDisplay?
+    def __init__(self, parser): 
         
         print("in init method!")
         
@@ -49,57 +51,39 @@ class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be i
             raise IOError("Must sepcify at least 1 row in config file.")
 
         #setup window
-        print("numOfRows: ", self.numOfRows)
         self.screenWidth, self.screenHeight = self.window.winfo_screenwidth(), self.window.winfo_screenheight()
         print("Width: {0}  Height: {1}".format(str(self.screenWidth), str(self.screenHeight)))
-        self.window.title('Shiprush LiveDisplay')
+        self.window.title('ZDisplay: Shiprush')
         self.window.wm_state("zoomed") #Maximize but with title bar
         #self.window.attributes("-fulscreen", True) #Uncomment to maximize without title bar
         self.window.geometry("{0}x{1}".format(str(self.screenWidth-17), str(self.screenHeight-75)))  #I left this in in case the maximize doesn't work
         #width -17 is there because the windwo seems to be 17 pixels too wide.  Maybe because the transparent
         #windows border isn't indcluded?
 
-    def specGet(self, section, option):
-        return self.parser.get(section, option)
 
+    
+        
     def build(self):
-        #Row and colum configure:
-        self.window.rowconfigure(1, weight = 1)
-        self.window.rowconfigure(2, weight = 1)
-        self.window.rowconfigure(3, weight = 1)
-        self.window.columnconfigure(1, weight = 1)
-        self.window.columnconfigure(2, weight = 1)
+        """This method builds the visual elements of the display
+        """
+        
+        
+        """I'd like to keep this, have and update constatnly checking it's value and reseting the fontsize, but 
+        I can't hardcode the number of rows and hence labelN it would be configing, 
+        Is it possible to softocde it?  label%s?
+        """
+        ##Scale
+        #scale1 = Scale(self.window, from_=12, to=80, orient=HORIZONTAL)
+        #scale1.grid(row=1)
 
-
-
-        #Scale
-        scale1 = Scale(self.window, from_=12, to=80, orient=HORIZONTAL)
-        scale1.grid(row=1)
-
-        #create two seperate frames for two seperate rows:
-        #top frame:
-        textVar1 = StringVar()
-        textVar1.set("Before the button's pressed!!") #Why is this coming out as the function id not the return value?
-        topFrame = tkinter.Frame(self.window, width=self.screenWidth +1000, height = self.screenHeight/2, bd = 5, relief = RAISED, padx = 20, pady = 12)
-        topFrame.grid(row=1)
-
-        #Create a frame on the bottom now
-        bottomFrame = tkinter.Frame(self.window, bg="black", width = self.screenWidth, height = self.screenHeight/2, bd = 20, relief = RAISED)
-        bottomFrame.grid(row=2)
-
-        #display a label insdie the top frame
-        topLabel = tkinter.Label(topFrame, wraplength=(self.screenWidth//2), bg = self.specGet("Row1Section", "backgroundcolor"), 
-                                 textvariable=textVar1, fg="red", font=("Times New Roman", scale1.get()))
-        topLabel.grid(row=1) #didn't work, still in middle left. acnhor nw maybe?
-
-        #display label inside the bottom frame
-        bottomLabel = tkinter.Label(bottomFrame, anchor=W, wraplength=(self.screenWidth//2), text="Shiprush bottom data!", fg="blue", font=("Times New Roman", scale1.get()))
-        bottomLabel.config(activebackground="black") #Unclear that this does anything
-        bottomLabel.grid(row=2) #didn't work
-
-        #Button
-        button1 = Button(self.window, text="Refresh", width = 30, command = lambda: buttonClicked(textVar1)) #add command
-        button1.grid(row=1, column=2)
+        
+        #Create frame1:
+        frame1 = tkinter.Frame(self.window, bd = 5, relief = RAISED, background = "steelblue1")
+        frame1.pack(side="top", fill="both", expand="true")
+        #create label1 inside of frame1
+        label1 = tkinter.Label(frame1, bg = "steelblue1",text="origial text!", font=("Times New Roman", 12)) #here's where you could set the font as a variable
+        #I wonder if they're a way for label1 to just copy frame1's background attribute
+        label1.pack(side="top", fill = "both", expand = "True") 
 
         #Import script:
         #Decide dynamically what to import from config file:
@@ -112,16 +96,16 @@ class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be i
 
 
         def update():
-            textVar1.set(script.returnTime())
+            label1.config(text = script.returnTime())
             self.window.after(1000, update)
         
         #Just to experiment with slider
-        def updatePad():
-            bottomLabel.config(pady = scale1.get()) #set padding according to scale
-            self.window.after(10, updatePad)
+        #def updatePad():
+        #    bottomLabel.config(pady = scale1.get()) #set padding according to scale
+        #    self.window.after(10, updatePad)
 
         update()
-        updatePad()
+        #updatePad()
         #displays the window
         self.window.mainloop() 
 
