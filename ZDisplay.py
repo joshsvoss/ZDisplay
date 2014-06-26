@@ -81,7 +81,7 @@ class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be i
         frame1 = tkinter.Frame(self.window, bd = 5, relief = RAISED, background = "steelblue1")
         frame1.pack(side="top", fill="both", expand="true")
         #create label1 inside of frame1
-        label1 = tkinter.Label(frame1, bg = "steelblue1",text="origial text!", font=("Times New Roman", 12)) #here's where you could set the font as a variable
+        label1 = tkinter.Label(frame1, bg = "steelblue1",text="origial text!", font=("Times New Roman", 60)) #here's where you could set the font as a variable
         #I wonder if they're a way for label1 to just copy frame1's background attribute
         label1.pack(side="top", fill = "both", expand = "True") 
 
@@ -92,11 +92,79 @@ class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be i
         sys.path.insert(0, scriptPath) #add script directory to path
         print("sys.path: ", sys.path)
         moduleName = self.parser.get("Row1Section", "module")
-        script = __import__(moduleName) #get module name, then import it
+        script1 = __import__(moduleName) #get module name, then import it
+
+        #if we have another row, repeat exact same code block for row2...rowN.
+        if self.numOfRows >= 2:
+            #Create frame2:
+            frame2 = tkinter.Frame(self.window, bd = 5, relief = RAISED, background = "pale green")
+            frame2.pack(side="top", fill="both", expand="true")
+            #create label1 inside of frame1
+            label2 = tkinter.Label(frame2, bg = "pale green",text="origial text!", font=("Times New Roman", 60)) #here's where you could set the font as a variable
+            #I wonder if they're a way for label1 to just copy frame1's background attribute
+            label2.pack(side="top", fill = "both", expand = "True") 
+
+            #Import script:
+            #Decide dynamically what to import from config file:
+            scriptPath = self.parser.get("Row2Section", "path") #get the directory of script
+            print("path to be inserted into sys.path: ", scriptPath)
+            sys.path.insert(0, scriptPath) #add script directory to path
+            print("sys.path: ", sys.path)
+            moduleName = self.parser.get("Row2Section", "module")
+            script2 = __import__(moduleName) #get module name, then import it
+
+        #if we have another row, repeat exact same code block for row3...rowN.
+        if self.numOfRows >= 3:
+            #Create frame3:
+            frame3 = tkinter.Frame(self.window, bd = 5, relief = RAISED, background = "dark slate gray")
+            frame3.pack(side="top", fill="both", expand="true")
+            #create label1 inside of frame1
+            label3 = tkinter.Label(frame3, fg = "white", bg = "dark slate gray",text="origial text!", font=("Times New Roman", 60)) #here's where you could set the font as a variable
+            #I wonder if they're a way for label1 to just copy frame1's background attribute
+            label3.pack(side="top", fill = "both", expand = "True") 
+
+            #Import script:
+            #Decide dynamically what to import from config file:
+            scriptPath = self.parser.get("Row3Section", "path") #get the directory of script
+            print("path to be inserted into sys.path: ", scriptPath)
+            sys.path.insert(0, scriptPath) #add script directory to path
+            print("sys.path: ", sys.path)
+            moduleName = self.parser.get("Row3Section", "module")
+            script3 = __import__(moduleName) #get module name, then import it
+
+        #if we have another row, repeat exact same code block for row4...rowN.
+        if self.numOfRows >= 4:
+            #Create frame4:
+            frame4 = tkinter.Frame(self.window, bd = 5, relief = RAISED, background = "pale green")
+            frame4.pack(side="top", fill="both", expand="true")
+            #create label1 inside of frame1
+            label4 = tkinter.Label(frame4, bg = "pale green",text="origial text!", font=("Times New Roman", 60)) #here's where you could set the font as a variable
+            #I wonder if they're a way for label1 to just copy frame1's background attribute
+            label4.pack(side="top", fill = "both", expand = "True") 
+
+            #Import script:
+            #Decide dynamically what to import from config file:
+            scriptPath = self.parser.get("Row4Section", "path") #get the directory of script
+            print("path to be inserted into sys.path: ", scriptPath)
+            sys.path.insert(0, scriptPath) #add script directory to path
+            print("sys.path: ", sys.path)
+            moduleName = self.parser.get("Row4Section", "module")
+            script4 = __import__(moduleName) #get module name, then import it
 
 
+
+        
+            
+            
         def update():
-            label1.config(text = script.returnTime())
+            label1.config(text = script1.returnTime()) #TODO: need to standardize the function name of figure out a way of grabbibg it from module
+            if self.numOfRows >=2:
+                label2.config(text = script2.returnInt())
+            if self.numOfRows >=3:
+                label3.config(text = script3.returnInt())
+            if self.numOfRows >=4:
+                label3.config(text = script4.returnInt())
+            #The method calls itself in another 1 second... then again...
             self.window.after(1000, update)
         
         #Just to experiment with slider
