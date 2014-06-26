@@ -83,7 +83,9 @@ class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be i
         self.screenWidth, self.screenHeight = self.window.winfo_screenwidth(), self.window.winfo_screenheight()
         print("Width: {0}  Height: {1}".format(str(self.screenWidth), str(self.screenHeight)))
         self.window.title('Shiprush LiveDisplay')
-        self.window.geometry("{0}x{1}".format(str(self.screenWidth-17), str(self.screenHeight-75)))  #Reset according to screen
+        self.window.wm_state("zoomed") #Maximize but with title bar
+        #self.window.attributes("-fulscreen", True) #Uncomment to maximize without title bar
+        self.window.geometry("{0}x{1}".format(str(self.screenWidth-17), str(self.screenHeight-75)))  #I left this in in case the maximize doesn't work
         #width -17 is there because the windwo seems to be 17 pixels too wide.  Maybe because the transparent
         #windows border isn't indcluded?
 
@@ -112,7 +114,7 @@ class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be i
         topLabel.pack(side="top") #didn't work, still in middle left. acnhor nw maybe?
 
         #display label inside the bottom frame
-        bottomLabel = tkinter.Label(bottomFrame, anchor=W, wraplength=(self.screenWidth//2), text="Shiprush top data!", fg="blue", font=("Times New Roman", scale1.get()))
+        bottomLabel = tkinter.Label(bottomFrame, anchor=W, wraplength=(self.screenWidth//2), text="Shiprush bottom data!", fg="blue", font=("Times New Roman", scale1.get()))
         bottomLabel.config(activebackground="black") #Unclear that this does anything
         bottomLabel.pack(side="bottom") #didn't work
 
@@ -126,6 +128,7 @@ class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be i
 
         def update():
             textVar1.set(localScript())
+            bottomLabel.config(pady = scale1.get()) #set padding according to scale
             self.window.after(1000, update)
         #topLabel.after(1000, updateFontFromScale())
         
@@ -138,12 +141,6 @@ class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be i
     
         
     #update method
-    def updateFontFromScale():
-        topLabel.config(fg="red")
-        topLabel.config(padx=scale1.get())
-
-        #call this function continoutsly
-        #labelRef.after(1000, updateFontFromScale)
 
 
 
