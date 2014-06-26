@@ -26,37 +26,6 @@ from threading import Timer
 
 
 
-#stack overflow answer to my Q:
-
-
-def setInterval(interval, times = -1):
-    """Code taken from http://stackoverflow.com/questions/5179467/equivalent-of-setinterval-in-python
-    designed to be a method decorator to call method repeatedly without blocking following code
-    """
-    # This will be the actual decorator,
-    # with fixed interval and times parameter
-    def outer_wrap(function):
-        # This will be the function to be
-        # called
-        def wrap(*args, **kwargs):
-            stop = threading.Event()
-
-            # This is another function to be executed
-            # in a different thread to simulate setInterval
-            def inner_wrap():
-                i = 0
-                while i != times and not stop.isSet():
-                    stop.wait(interval)
-                    function(*args, **kwargs)
-                    i += 1
-
-            t = threading.Timer(0, inner_wrap)
-            t.daemon = True
-            t.start()
-            return stop
-        return wrap
-    return outer_wrap
-
     #button clicked command
 def buttonClicked(var):
     var.set(localScript()) #Why is this executing before it's pressed?
@@ -94,35 +63,45 @@ class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be i
         return self.parser.get(section, option)
 
     def build(self):
+        #Row and colum configure:
+        self.window.rowconfigure(1, weight = 1)
+        self.window.rowconfigure(2, weight = 1)
+        self.window.rowconfigure(3, weight = 1)
+        self.window.columnconfigure(1, weight = 1)
+        self.window.columnconfigure(2, weight = 1)
+
+
+
         #Scale
         scale1 = Scale(self.window, from_=12, to=80, orient=HORIZONTAL)
-        scale1.pack(side="left")
+        scale1.grid(row=1)
 
         #create two seperate frames for two seperate rows:
         #top frame:
         textVar1 = StringVar()
         textVar1.set("Before the button's pressed!!") #Why is this coming out as the function id not the return value?
         topFrame = tkinter.Frame(self.window, width=self.screenWidth +1000, height = self.screenHeight/2, bd = 5, relief = RAISED, padx = 20, pady = 12)
-        topFrame.pack(side="top", padx=5, pady=50)
+        topFrame.grid(row=1)
 
         #Create a frame on the bottom now
         bottomFrame = tkinter.Frame(self.window, bg="black", width = self.screenWidth, height = self.screenHeight/2, bd = 20, relief = RAISED)
-        bottomFrame.pack(side="top", padx=5, pady=30)
+        bottomFrame.grid(row=2)
 
         #display a label insdie the top frame
         topLabel = tkinter.Label(topFrame, wraplength=(self.screenWidth//2), bg = self.specGet("Row1Section", "backgroundcolor"), 
                                  textvariable=textVar1, fg="red", font=("Times New Roman", scale1.get()))
-        topLabel.pack(side="top") #didn't work, still in middle left. acnhor nw maybe?
+        topLabel.grid(row=1) #didn't work, still in middle left. acnhor nw maybe?
 
         #display label inside the bottom frame
         bottomLabel = tkinter.Label(bottomFrame, anchor=W, wraplength=(self.screenWidth//2), text="Shiprush bottom data!", fg="blue", font=("Times New Roman", scale1.get()))
         bottomLabel.config(activebackground="black") #Unclear that this does anything
-        bottomLabel.pack(side="bottom") #didn't work
+        bottomLabel.grid(row=2) #didn't work
 
         #Button
         button1 = Button(self.window, text="Refresh", width = 30, command = lambda: buttonClicked(textVar1)) #add command
-        button1.pack(side="bottom")
+        button1.grid(row=1, column=2)
 
+        #Import script:
         #Decide dynamically what to import from config file:
         scriptPath = self.parser.get("Row1Section", "path") #get the directory of script
         print("path to be inserted into sys.path: ", scriptPath)
@@ -135,7 +114,6 @@ class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be i
         def update():
             textVar1.set(script.returnTime())
             self.window.after(1000, update)
-        #topLabel.after(1000, updateFontFromScale())
         
         #Just to experiment with slider
         def updatePad():
@@ -144,18 +122,11 @@ class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be i
 
         update()
         updatePad()
-        self.window.mainloop() #displays the window
+        #displays the window
+        self.window.mainloop() 
 
 
-
-
-    
-        
-    #update method
-
-
-
-   #define?
+    #define?
     def __str__(self):
         pass
     
@@ -164,11 +135,7 @@ class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be i
         return "ZDisplay(%s)" % str(self)
 
 
-    """ Any reason to make this guy my own class inherting from config parser?
-    or is there no reason for that and I just make an instace of the imported module?  
-    doesn't hurt to inherit I guess just gives me added flexibility.  
-    """
-   
+  
     
 
 #Program begins running here:
@@ -179,14 +146,11 @@ if len(argsList) <2:
     sys.exit(2)
 #otherwise, use the arg to find the .ini file:
 
-
 #parse the config file
 parser = configparser.ConfigParser() #Instantiate object
-print("args[1]: ", argsList[1])
 parser.read(argsList[1])
-print(str(parser.sections()))
 
-#Now going to pass ConfigParser object to ZDisplay
+#Now going to pass ConfigParser object to ZDisplay, and display it using build()
 display = ZDisplay(parser)
 display.build()
 
