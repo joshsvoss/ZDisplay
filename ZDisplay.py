@@ -25,6 +25,7 @@ from threading import Timer
 
 
 
+
 #stack overflow answer to my Q:
 
 
@@ -78,7 +79,7 @@ class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be i
         if self.numOfRows < 1:
             raise IOError("Must sepcify at least 1 row in config file.")
 
-        
+        #setup window
         print("numOfRows: ", self.numOfRows)
         self.screenWidth, self.screenHeight = self.window.winfo_screenwidth(), self.window.winfo_screenheight()
         print("Width: {0}  Height: {1}".format(str(self.screenWidth), str(self.screenHeight)))
@@ -122,17 +123,27 @@ class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be i
         button1 = Button(self.window, text="Refresh", width = 30, command = lambda: buttonClicked(textVar1)) #add command
         button1.pack(side="bottom")
 
+        #Decide dynamically what to import from config file:
+        scriptPath = self.parser.get("Row1Section", "path") #get the directory of script
+        print("path to be inserted into sys.path: ", scriptPath)
+        sys.path.insert(0, scriptPath) #add script directory to path
+        print("sys.path: ", sys.path)
+        moduleName = self.parser.get("Row1Section", "module")
+        script = __import__(moduleName) #get module name, then import it
 
-        timer = Timer(10.0, buttonClicked(textVar1))
-        timer.start()
 
         def update():
-            textVar1.set(localScript())
-            bottomLabel.config(pady = scale1.get()) #set padding according to scale
+            textVar1.set(script.returnTime())
             self.window.after(1000, update)
         #topLabel.after(1000, updateFontFromScale())
         
+        #Just to experiment with slider
+        def updatePad():
+            bottomLabel.config(pady = scale1.get()) #set padding according to scale
+            self.window.after(10, updatePad)
+
         update()
+        updatePad()
         self.window.mainloop() #displays the window
 
 
