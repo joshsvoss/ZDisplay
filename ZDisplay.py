@@ -63,15 +63,16 @@ class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be i
 
     
         
-    def build(self):
+    def buildWindow(self):
         """This method builds the visual elements of the display
         """   
 
         #Create frame1:
-        frame1 = tkinter.Frame(self.window, bd = 10, relief = RAISED, background = "steelblue1")
+        frame1 = tkinter.Frame(self.window, bd = 10, relief = RAISED, background = self.parser.get('Row1Section', 'backgroundcolor')) #TODO deal with edge case: what if config is not filled in?
         frame1.pack(side="top", fill="both", expand="true")
         #create label1 inside of frame1
-        label1 = tkinter.Label(frame1, bg = "steelblue1",text="origial text!", font=("Times New Roman", 60)) #here's where you could set the font as a variable
+        label1 = tkinter.Label(frame1, bg = self.parser.get('Row1Section', 'backgroundcolor'),text="origial text!", font=("Times New Roman", 
+                self.parser.get('Row1Section', 'fontsize'))) #here's where you could set the font as a variable
         #I wonder if they're a way for label1 to just copy frame1's background attribute
         label1.pack(side="top", fill = "both", expand = "True") 
 
@@ -87,10 +88,10 @@ class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be i
         #if we have another row, repeat exact same code block for row2...rowN.
         if self.numOfRows >= 2:
             #Create frame2:
-            frame2 = tkinter.Frame(self.window, bd = 10, relief = RAISED, background = "pale green")
+            frame2 = tkinter.Frame(self.window, bd = 10, relief = RAISED, background = self.parser.get('Row2Section', 'backgroundcolor'))
             frame2.pack(side="top", fill="both", expand="true")
             #create label1 inside of frame1
-            label2 = tkinter.Label(frame2, bg = "pale green",text="origial text!", font=("Times New Roman", 60)) #here's where you could set the font as a variable
+            label2 = tkinter.Label(frame2, bg = self.parser.get('Row2Section', 'backgroundcolor'),text="origial text!", font=("Times New Roman", self.parser.get('Row2Section', 'fontsize'))) #here's where you could set the font as a variable
             #I wonder if they're a way for label1 to just copy frame1's background attribute
             label2.pack(side="top", fill = "both", expand = "True") 
 
@@ -106,10 +107,10 @@ class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be i
         #if we have another row, repeat exact same code block for row3...rowN.
         if self.numOfRows >= 3:
             #Create frame3:
-            frame3 = tkinter.Frame(self.window, bd = 10, relief = RAISED, background = "dark slate gray")
+            frame3 = tkinter.Frame(self.window, bd = 10, relief = RAISED, background = self.parser.get('Row3Section', 'backgroundcolor'))
             frame3.pack(side="top", fill="both", expand="true")
             #create label1 inside of frame1
-            label3 = tkinter.Label(frame3, fg = "white", bg = "dark slate gray",text="origial text!", font=("Times New Roman", 60)) #here's where you could set the font as a variable
+            label3 = tkinter.Label(frame3, fg = "white", bg = self.parser.get('Row3Section', 'backgroundcolor'),text="origial text!", font=("Times New Roman", self.parser.get('Row3Section', 'fontsize'))) #here's where you could set the font as a variable
             #I wonder if they're a way for label1 to just copy frame1's background attribute
             label3.pack(side="top", fill = "both", expand = "True") 
 
@@ -125,10 +126,10 @@ class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be i
         #if we have another row, repeat exact same code block for row4...rowN.
         if self.numOfRows >= 4:
             #Create frame4:
-            frame4 = tkinter.Frame(self.window, bd = 10, relief = RAISED, background = "pale green")
+            frame4 = tkinter.Frame(self.window, bd = 10, relief = RAISED, background = self.parser.get('Row4Section', 'backgroundcolor'))
             frame4.pack(side="top", fill="both", expand="true")
             #create label1 inside of frame1
-            label4 = tkinter.Label(frame4, bg = "pale green",text="origial text!", font=("Times New Roman", 60)) #here's where you could set the font as a variable
+            label4 = tkinter.Label(frame4, bg = self.parser.get('Row4Section', 'backgroundcolor'),text="origial text!", font=("Times New Roman", self.parser.get('Row1Section', 'fontsize'))) #here's where you could set the font as a variable
             #I wonder if they're a way for label1 to just copy frame1's background attribute
             label4.pack(side="top", fill = "both", expand = "True") 
 
@@ -153,7 +154,7 @@ class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be i
             if self.numOfRows >=3:
                 label3.config(text = script3.returnInt())
             if self.numOfRows >=4:
-                label3.config(text = script4.returnInt())
+                label4.config(text = script4.returnInt())
             #The method calls itself in another 1 second... then again...
             self.window.after(1000, update)
 
@@ -197,6 +198,6 @@ parser.read(argsList[1])
 
 #Now going to pass ConfigParser object to ZDisplay, and display it using build()
 display = ZDisplay(parser)
-display.build()
+display.buildWindow()
 
 
