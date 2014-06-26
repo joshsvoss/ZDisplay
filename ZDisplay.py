@@ -23,6 +23,11 @@ import time
 from datetime import datetime
 from threading import Timer
 
+
+
+#stack overflow answer to my Q:
+
+
 def setInterval(interval, times = -1):
     """Code taken from http://stackoverflow.com/questions/5179467/equivalent-of-setinterval-in-python
     designed to be a method decorator to call method repeatedly without blocking following code
@@ -119,8 +124,14 @@ class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be i
         timer = Timer(10.0, buttonClicked(textVar1))
         timer.start()
 
+        def update():
+            textVar1.set(localScript())
+            self.window.after(1000, update)
         #topLabel.after(1000, updateFontFromScale())
+        
+        update()
         self.window.mainloop() #displays the window
+
 
 
 
@@ -171,24 +182,4 @@ print(str(parser.sections()))
 display = ZDisplay(parser)
 display.build()
 
-#self.numOfRows = int(parser.get("GeneralSection", "NumOfRows"))
-#print("Number of rows:", self.numOfRows)
 
-#Use nested for looop to recieve all of the config options, depending on numOfRows
-
-
-#Construct a ZDisplay object passing it the parameters
-    
-#TODO possible delete
-#based on numOfRows, read in all of the filepaths in the config file
-#TODO Should each row be done seperately instead? serial instead of paralel?
-#scriptPathList = list()
-#for i in range(1, (numOfRows + 1)) :
-#    scriptPathList.append(parser.get("RowsSection", "Row%s.py" % i)) #Get specified script filepath
-
-#print(scriptPathList)
-
-
-
-
- 
