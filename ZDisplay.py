@@ -41,9 +41,7 @@ def localScript():
 class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be it's own window?  Any downside?
 
     def __init__(self, parser): 
-        
-        print("in init method!")
-        
+        #initialize data fields:
         self.parser = parser
         self.window = Tk() #open a window in tkinter
         self.numOfRows = int(parser.get("GeneralSection", "numofrows")) #possible namespace conflict here
@@ -55,6 +53,7 @@ class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be i
         print("Width: {0}  Height: {1}".format(str(self.screenWidth), str(self.screenHeight)))
         self.window.title('ZDisplay: Shiprush')
         self.window.wm_state("zoomed") #Maximize but with title bar
+        #self.window.attributes("-zoomed", True) #This command needs to run on the pi, different attribute lost.  Comment the command above
         #self.window.attributes("-fulscreen", True) #Uncomment to maximize without title bar
         self.window.geometry("{0}x{1}".format(str(self.screenWidth-17), str(self.screenHeight-75)))  #I left this in in case the maximize doesn't work
         #width -17 is there because the windwo seems to be 17 pixels too wide.  Maybe because the transparent
