@@ -1,4 +1,9 @@
 #ZDisplay.py
+#TODO methodize the row creation
+#TODO try recieving a dictionary as input, possibly with multiple key, value pairs, use the 
+#length to decide how many elements to generate
+#TODO decide what fullscreen line to use via os version grab
+
 """ This module contains the program for displaying Z-Firm stats
 on screen.  Author: Joshua S. Voss,  Version: 1.0
 
@@ -153,7 +158,7 @@ class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be i
         def update():
             label1.config(text = script1.returnTime()) #TODO: need to standardize the function name of figure out a way of grabbibg it from module
             if self.numOfRows >=2:
-                label2.config(text = script2.returnInt())
+                label2.config(text = script2.returnCallQueue())
             if self.numOfRows >=3:
                 label3.config(text = script3.returnInt())
             if self.numOfRows >=4:
