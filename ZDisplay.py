@@ -158,9 +158,9 @@ class ZDisplay(object): #TODO maybe just make it inherit from Tk()??? would be i
         def update():
             label1.config(text = script1.returnTime()) #TODO: need to standardize the function name of figure out a way of grabbibg it from module
             if self.numOfRows >=2:
-                label2.config(text = script2.returnCallQueue())
+                label2.config(text = script2.callsInQueueToday(1104))
             if self.numOfRows >=3:
-                label3.config(text = script3.returnInt())
+                label3.config(text = script3.callsInLastHour(1104))
             if self.numOfRows >=4:
                 label4.config(text = script4.returnInt())
             #The method calls itself in another 1 second... then again...
